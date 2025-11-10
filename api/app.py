@@ -13,3 +13,8 @@ def root():
         "version" : "1.0.0",
         "status" : "running"
     }
+    
+@app.post("/api/search")
+def search(payload: dict):
+    return {"query": payload.get("query", ""), "results": []}
+    
