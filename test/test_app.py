@@ -31,3 +31,38 @@ def test_health_endpoint_contains_status_and_timestamp():
     assert "status" in data
     assert "timestamp" in data
     assert data["status"] == "healthy"
+
+def test_health_contains_index_loaded_field():
+    client = TestClient(app)
+    response = client.get("/health")
+    data = response.json()
+    
+    assert "index_loaded" in data
+    assert data["index_loaded"] is True
+    
+def test_health_returns_false_when_index_not_loaded():
+    from api.dependencies import get_rag_system
+    mock_rag = get_rag_system()
+    mock_rag.engine = None
+    
+    client = TestClient(app)
+    response = client.get("/health")
+    data = response.json()
+    
+    assert data["index_loaded"] is False
+
+def test_health_returns_true_when_index_loaded(monkeypatch):
+    """RAG 인덱스가 이미 로드된 경우"""
+    from api.dependencies import get_rag_system
+    mock_rag = get_rag_system()
+
+    class DummyEngine:
+        index = True
+
+    mock_rag.engine = DummyEngine()
+
+    client = TestClient(app)
+    response = client.get("/health")
+    data = response.json()
+
+    assert data["index_loaded"] is True
