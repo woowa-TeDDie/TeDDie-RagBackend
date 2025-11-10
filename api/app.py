@@ -14,6 +14,14 @@ def root():
         "status" : "running"
     }
     
+@app.get("/health")
+def health():
+    from datetime import datetime
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+    
 @app.post("/api/search")
 def search(payload: dict):
     return {"query": payload.get("query", ""), "results": []}
