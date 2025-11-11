@@ -1,16 +1,26 @@
+import logging
 from fastapi import FastAPI, Depends
 from api.dependencies import get_rag_system
 from rag.RagSearch import WoowacourseRAG
 from datetime import datetime
 from contextlib import asynccontextmanager
 
+logger = logging.getLogger("TeDDieBackend")
+logging.basicConfig(level=logging.INFO, format= "[%(levelname)s] %(message)s")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("[INFO] 🚀 TeDDie 백엔드 서버 실행 중...")
-    rag = get_rag_system()
-    print(f"[INFO] ℹ️  RAG 시스템 상태: {'로드됨' if rag.index else '로드되지 않음'}")
-    yield
-    print("[INFO] 🛑 TeDDie 백엔드 서버 종료 중...")
+    logger.info("🚀 TeDDie 백엔드 서버 실행 중...")
+    try:
+        rag = get_rag_system()
+        if rag.index is None:
+            logger.warning("⚠️ No FAISS index found. Run build_index() manually.")
+        logger.info("✅ RAG index check completed.")
+    except Exception as e:
+        logger.error(f"❌ Failed to load RAG index: {e} (no faiss index)")
+    finally:
+        yield
+        logger.info("🛑 TeDDie 백엔드 서버 종료 중...")
 
 app = FastAPI(
     title="TeDDie Backend API",

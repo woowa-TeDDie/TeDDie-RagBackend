@@ -1,4 +1,6 @@
 import pytest
+import time
+import logging
 from fastapi.testclient import TestClient
 from api.app import app
 
@@ -69,8 +71,10 @@ def test_health_returns_true_when_index_loaded(monkeypatch):
 def test_app_has_lifespan():
     assert app.router.lifespan_context is not None
 
-def test_startup_loads_rag_index(capsys):
-    client = TestClient(app)
-    captured = capsys.readouterr()
+def test_startup_logs_rag_index_status(caplog):
+    caplog.set_level(logging.INFO)
+    with TestClient(app):
+        pass
 
-    assert "index" in captured.out.lower() or "rag" in captured.out.lower()
+    messages = " ".join(caplog.messages).lower()
+    assert "rag" in messages or "index" in messages
