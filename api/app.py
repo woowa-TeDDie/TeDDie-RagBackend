@@ -4,6 +4,7 @@ from api.dependencies import get_rag_system
 from rag.RagSearch import WoowacourseRAG
 from datetime import datetime
 from contextlib import asynccontextmanager
+from api.model import SearchRequest, SearchResult, SearchResponse
 
 logger = logging.getLogger("TeDDieBackend")
 logging.basicConfig(level=logging.INFO, format= "[%(levelname)s] %(message)s")
@@ -49,5 +50,50 @@ def health_check(rag: WoowacourseRAG = Depends(get_rag_system)):
     }
 
 @app.post("/api/search")
-def search(payload: dict):
-    return {"query": payload.get("query", ""), "results": []}
+def search(request: SearchRequest, rag: WoowacourseRAG = Depends(get_rag_system)):
+    raw_results = rag.search(request.query, top_k=request.top_k)
+    results = []
+
+    # 결과가 비어 있으면 즉시 반환
+    if not raw_results:
+        return SearchResponse(query=request.query, results=[])
+
+    for item in raw_results:
+        if not item:
+            continue
+
+        doc, score = (item[0], item[1]) if isinstance(item, (tuple, list)) else (item, 0.0)
+
+        # doc이 dict면 바로 처리
+        if isinstance(doc, dict):
+            results.append(
+                SearchResult(
+                    repo=doc.get("repo", "unknown"),
+                    text=doc.get("text", ""),
+                    url=doc.get("url", ""),
+                    similarity_score=score,
+                )
+            )
+            continue
+
+        if isinstance(doc, str):
+            results.append(
+                SearchResult(
+                    repo="unknown",
+                    text=doc,
+                    url="",
+                    similarity_score=score,
+                )
+            )
+            continue
+
+        results.append(
+            SearchResult(
+                repo=getattr(doc, "repo", "unknown"),
+                text=getattr(doc, "text", ""),
+                url=getattr(doc, "url", ""),
+                similarity_score=score,
+            )
+        )
+
+    return SearchResponse(query=request.query, results=results)
