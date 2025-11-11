@@ -68,3 +68,9 @@ def test_health_returns_true_when_index_loaded(monkeypatch):
 
 def test_app_has_lifespan():
     assert app.router.lifespan_context is not None
+
+def test_startup_loads_rag_index(capsys):
+    client = TestClient(app)
+    captured = capsys.readouterr()
+
+    assert "index" in captured.out.lower() or "rag" in captured.out.lower()
