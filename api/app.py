@@ -42,7 +42,7 @@ def root():
 def health_check(rag: WoowacourseRAG = Depends(get_rag_system)):
     index_loaded = rag.index is not None
     timestamp = datetime.now().isoformat(timespec="seconds")
-
+    
     return {
         "status": "healthy",
         "timestamp": timestamp,
@@ -53,18 +53,12 @@ def health_check(rag: WoowacourseRAG = Depends(get_rag_system)):
 def search(request: SearchRequest, rag: WoowacourseRAG = Depends(get_rag_system)):
     raw_results = rag.search(request.query, top_k=request.top_k)
     results = []
-
-    # 결과가 비어 있으면 즉시 반환
     if not raw_results:
         return SearchResponse(query=request.query, results=[])
-
     for item in raw_results:
         if not item:
             continue
-
         doc, score = (item[0], item[1]) if isinstance(item, (tuple, list)) else (item, 0.0)
-
-        # doc이 dict면 바로 처리
         if isinstance(doc, dict):
             results.append(
                 SearchResult(
@@ -75,7 +69,6 @@ def search(request: SearchRequest, rag: WoowacourseRAG = Depends(get_rag_system)
                 )
             )
             continue
-
         if isinstance(doc, str):
             results.append(
                 SearchResult(
@@ -86,7 +79,6 @@ def search(request: SearchRequest, rag: WoowacourseRAG = Depends(get_rag_system)
                 )
             )
             continue
-
         results.append(
             SearchResult(
                 repo=getattr(doc, "repo", "unknown"),
@@ -95,5 +87,8 @@ def search(request: SearchRequest, rag: WoowacourseRAG = Depends(get_rag_system)
                 similarity_score=score,
             )
         )
-
+    results.sort(key=lambda x: x.similarity_score, reverse=True)
+    if len(results) > request.top_k:
+        results = results[:request.top_k]
+        
     return SearchResponse(query=request.query, results=results)
