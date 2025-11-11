@@ -17,7 +17,7 @@ def test_root_endpoint_returns_service_info():
     assert "version" in data
     assert data["service"] == "TeDDie Backend"
     
-def test_health_endpoint_returns_200():
+    
     client = TestClient(app)
     response = client.get("/health")
     
@@ -52,7 +52,6 @@ def test_health_returns_false_when_index_not_loaded():
     assert data["index_loaded"] is False
 
 def test_health_returns_true_when_index_loaded(monkeypatch):
-    """RAG 인덱스가 이미 로드된 경우"""
     from api.dependencies import get_rag_system
     mock_rag = get_rag_system()
 
@@ -66,3 +65,7 @@ def test_health_returns_true_when_index_loaded(monkeypatch):
     data = response.json()
 
     assert data["index_loaded"] is True
+
+def test_startup_event_handler_exists():
+    startup_handlers = app.router.on_startup
+    assert len(startup_handlers) > 0
