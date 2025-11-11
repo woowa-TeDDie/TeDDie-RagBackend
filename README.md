@@ -94,9 +94,9 @@ Java로 작성된 TeDDie 애플리케이션에서 HTTP 요청으로 우테코 �
 
 ### Phase 4: 검색 API 구현
 - [ ] **4.1 Pydantic 모델 정의**
-  - [ ] `api/models.py` 생성
-  - [ ] `SearchRequest` 모델 정의 (query, top_k)
-  - [ ] `SearchResult` 모델 정의 (repo, text, url, similarity_score)
+  - [X] `api/models.py` 생성
+  - [X] `SearchRequest` 모델 정의 (query, top_k)
+  - [X] `SearchResult` 모델 정의 (repo, text, url, similarity_score)
   - [ ] `SearchResponse` 모델 정의 (query, results)
   - [ ] 모델 유효성 검증 테스트
   - [ ] 테스트 통과 확인
