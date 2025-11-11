@@ -2,11 +2,19 @@ from fastapi import FastAPI, Depends
 from api.dependencies import get_rag_system
 from rag.RagSearch import WoowacourseRAG
 from datetime import datetime
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("[INFO] 🚀 TeDDie 백엔드 서버 실행 중...")
+    yield
+    print("[INFO] 🛑 TeDDie 백엔드 서버 종료 중...")
 
 app = FastAPI(
     title="TeDDie Backend API",
     description="API for TeDDie Backend Service",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 @app.get("/")
@@ -14,7 +22,7 @@ def root():
     return {
         "service": "TeDDie Backend",
         "version": "1.0.0",
-        "status": "running"
+        "status": "running",
     }
 
 @app.get("/health")
