@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from api.models import SearchRequest
+from api.model import SearchRequest
 
 def test_search_request_valid():
     req = SearchRequest(query="로또", top_k=3)
