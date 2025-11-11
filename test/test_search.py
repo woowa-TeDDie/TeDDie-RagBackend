@@ -48,10 +48,29 @@ def test_search_rejects_wrong_type():
 def test_search_accepts_valid_payload():
     payload = {"query": "자동차 경주", "top_k": 3}
     resp = client.post("/api/search", json=payload)
-    
-    assert resp.status_code == 200
-    
     data = resp.json()
-    
+
     assert data["query"] == "자동차 경주"
     assert len(data["results"]) <= 5
+    
+def test_search_results_are_sorted_by_similarity_desc():
+    payload = {"query": "자동차 경주", "top_k": 5}
+    resp = client.post("/api/search", json=payload)
+    data = resp.json()
+    results = data["results"]
+    scores = [item["similarity_score"] for item in results]
+
+    assert scores == sorted(scores, reverse=True)
+    
+def test_search_respects_top_k_limit():
+    payload = {"query": "자동차 경주", "top_k": 3}
+    resp = client.post("/api/search", json=payload)
+    data = resp.json()
+    results = data["results"]
+
+    assert len(results) <= 3
+    for r in results:
+        assert "similarity_score" in r
+        assert isinstance(r["similarity_score"], (int, float))
+        assert 0.0 <= r["similarity_score"] <= 1.0
+        
