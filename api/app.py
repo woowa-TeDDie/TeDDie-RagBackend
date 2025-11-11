@@ -7,6 +7,8 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("[INFO] 🚀 TeDDie 백엔드 서버 실행 중...")
+    rag = get_rag_system()
+    print(f"[INFO] ℹ️  RAG 시스템 상태: {'로드됨' if rag.index else '로드되지 않음'}")
     yield
     print("[INFO] 🛑 TeDDie 백엔드 서버 종료 중...")
 
