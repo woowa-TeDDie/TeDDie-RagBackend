@@ -66,6 +66,5 @@ def test_health_returns_true_when_index_loaded(monkeypatch):
 
     assert data["index_loaded"] is True
 
-def test_startup_event_handler_exists():
-    startup_handlers = app.router.on_startup
-    assert len(startup_handlers) > 0
+def test_app_has_lifespan():
+    assert app.router.lifespan_context is not None
