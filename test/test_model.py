@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from api.model import SearchRequest, SearchResult
+from api.model import SearchRequest, SearchResult, SearchResponse
 
 def test_search_request_valid():
     req = SearchRequest(query="로또", top_k=3)
@@ -27,3 +27,21 @@ def test_search_result_can_be_created():
     
     assert result.repo == "java-racingcar-6"
     assert result.similarity_score == 0.985
+    
+def test_search_response_can_be_created():
+    resp = SearchResponse(query = "로또", results = [])
+    
+    assert resp.query == "로또"
+    assert resp.results == []
+    
+def test_search_response_contains_list_of_results():
+    result = SearchResult(
+        repo = "java-lotto-6",
+        text = "# 미션 - 로또",
+        url = "https://github.com/woowacourse/java-lotto-6",
+        similarity_score = 0.985,
+    )
+    resp = SearchResponse(query = "로또", results = [result])
+    
+    assert resp.results[0].repo == "java-lotto-6"
+    assert isinstance(resp.results[0].similarity_score, float)
