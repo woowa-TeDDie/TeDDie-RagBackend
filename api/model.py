@@ -9,3 +9,7 @@ class SearchResult(BaseModel):
     text: str
     url: str
     similarity_score: float
+    
+class SearchResponse(BaseModel):
+    query: str
+    results: list[SearchResult]
