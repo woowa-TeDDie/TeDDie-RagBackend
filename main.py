@@ -1,9 +1,11 @@
 import uvicorn
+from util.config import settings
 
 if __name__ == "__main__":
     uvicorn.run(
         "api.app:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
+        host=settings.API_HOST,
+        port=settings.API_PORT,
+        reload=settings.RELOAD,
+        log_level=settings.LOG_LEVEL,
     )

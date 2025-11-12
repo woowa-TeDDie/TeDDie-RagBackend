@@ -39,11 +39,11 @@ Java로 작성된 TeDDie 애플리케이션에서 HTTP 요청으로 우테코 �
 ## ✅ 기능 체크리스트
 
 ### Phase 1: 기본 인프라 구축
-- [ ] **1.1 프로젝트 초기 설정**
+- [X] **1.1 프로젝트 초기 설정**
   - [X] Repository 생성
   - [X] 폴더 구조 생성 (`api/`, `test/`)
   - [X] `.gitignore` 작성
-  - [ ] `requirements.txt` 작성
+  - [X] `requirements.txt` 작성
   - [X] 가상환경 생성 및 의존성 설치
   - [X] README.md 작성
 
