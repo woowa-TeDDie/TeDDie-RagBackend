@@ -10,7 +10,6 @@ TeDDie 프로젝트를 위한 RAG(Retrieval-Augmented Generation) 검색 API 서
 - [프로젝트 구조](#-프로젝트-구조)
 - [설치 및 실행](#-설치-및-실행)
 - [API 명세](#-api-명세)
-- [개발 가이드](#-개발-가이드)
 
 ---
 
@@ -149,7 +148,37 @@ Java로 작성된 TeDDie 애플리케이션에서 HTTP 요청으로 우테코 �
 ## 📁 프로젝트 구조
 
 ```
-
+TeDDie-RagBackend/
+ ├── app.py              
+ ├── main.py             
+ ├── requirements.txt    
+ ├── LICENSE             
+ ├── README.md           
+ ├── controller/         
+ │   ├── healthController.py 
+ │   └── searchController.py 
+ ├── domain/             
+ │   ├── model/          
+ │   │   ├── health.py
+ │   │   ├── searchRequest.py
+ │   │   ├── searchResponse.py
+ │   │   └── searchResult.py
+ │   └── rag/            
+ │       └── ragEngine.py
+ ├── infra/              
+ │   └── dependencies.py 
+ ├── service/            
+ │   ├── healthService.py    
+ │   └── ragService.py       
+ ├── test/               
+ │   ├── test_app.py
+ │   ├── test_model.py
+ │   └── test_search.py
+ └── util/               
+     ├── config.py       
+     ├── logger.py       
+     └── repository/     
+         └── ragRepository.py
 ```
 
 ---
@@ -194,19 +223,14 @@ RAG_DATASET_PATH=../TeDDie-RagSystem/woowacourse_rag_dataset.jsonl
 ```
 
 ### 4. 서버 실행
-
-#### 개발 모드 (Hot Reload)
 ```bash
 python main.py
 ```
-
-#### 프로덕션 모드
 ```bash
 uvicorn api.app:app --host 0.0.0.0 --port 8000
 ```
 
 ### 5. 접속 확인
-
 - **API Root**: http://localhost:8000
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
@@ -312,46 +336,5 @@ uvicorn api.app:app --host 0.0.0.0 --port 8000
     "detail": "RAG index not loaded"
   }
   ```
-
----
-
-## 👨‍💻 개발 가이드
-
-### 프로젝트 설정
-
-1. **가상환경 활성화**
-   ```bash
-   source .venv/bin/activate  # Windows: .venv\Scripts\activate
-   ```
-
-2. **개발 의존성 설치**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **코드 스타일 체크 (선택)**
-   ```bash
-   pip install black flake8
-   black .
-   flake8 .
-   ```
-
-### TDD 개발 프로세스
-
-1. **테스트 작성** (`test/test_*.py`)
-2. **테스트 실행** (실패 확인)
-   ```bash
-   pytest test/test_*.py -v
-   ```
-3. **코드 구현** (`api/*.py`)
-4. **테스트 재실행** (통과 확인)
-5. **리팩토링**
-6. **커밋**
-
-### 브랜치 전략
-
-- `main`: 배포 가능한 안정 버전
-- `develop`: 개발 중인 기능 통합
-- `feature/*`: 각 기능 개발
 
 ---
