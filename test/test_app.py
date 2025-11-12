@@ -3,6 +3,7 @@ import time
 import logging
 from fastapi.testclient import TestClient
 from app import app
+from infra.dependencies import get_rag_system
 
 def test_root_endpoint_returns_200():
     client = TestClient(app)
@@ -43,7 +44,6 @@ def test_health_contains_index_loaded_field():
     assert data["index_loaded"] is True
     
 def test_health_returns_false_when_index_not_loaded():
-    from infra.dependencies import get_rag_system
     mock_rag = get_rag_system()
     mock_rag.engine = None
     
@@ -54,7 +54,6 @@ def test_health_returns_false_when_index_not_loaded():
     assert data["index_loaded"] is False
 
 def test_health_returns_true_when_index_loaded(monkeypatch):
-    from infra.dependencies import get_rag_system
     mock_rag = get_rag_system()
 
     class DummyEngine:
